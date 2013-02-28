@@ -45,6 +45,10 @@ module.exports = ()->
           opt = 
             cwd: path.join process.cwd(), running.path
             stdio: 'inherit'
+            env: {}
+          opt.env[k] = v for k, v of process.env
+          opt.env['TESTPORTABRANCH'] = branch.branch
+          opt.env['TESTPORTAREPO'] = repo
           running.process = spawn './.test-porta',[], opt 
           running.process.on 'exit', ->
             console.error "#{running.path} exited.."
