@@ -1,0 +1,30 @@
+{
+  "name": "test-porta",
+  "version": "0.0.1",
+  "description": "有一个git仓库，有很多分支，它们都要被运行，测试需要看它们……",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "os": [
+    "!win32"
+  ],
+  "bin": {
+    "test-porta": "./bin/test-porta"
+  },
+  "dependencies": {
+    "iced-coffee-script": "~1.4.0c"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "./test.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/layerssss/dev-porta.git"
+  },
+  "author": "Michael Yin",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "9432c91832ce41fe4ece27863f6eedda86860c7d"
+}
