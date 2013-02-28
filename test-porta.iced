@@ -22,35 +22,37 @@ module.exports = ()->
   branchesJSON = ""
   while true
     await lsremote repo, defer e, branches
-    continue if e
-    if branchesJSON != JSON.stringify branches
-      console.log "heads changed, stopping..."
-      branchesJSON = JSON.stringify branches
-      for running in runnings
-        try
-          running.process.kill()
-        catch e
-        await exec "rm -Rf #{running.path}", defer e
-
-      runnings =[]
-      for branch in branches
-        running = 
-          path: "#{branch.branch}.#{(repo.match /\/([^\/]+)$/)[1]}.test-porta.tmp"
-        console.log "checking out to #{running.path}..."
-        await exec "rm -Rf #{running.path}", defer e
-        await exec "mkdir #{running.path}", defer e
-        await exec "git clone --depth=1 --recursive --branch #{branch.branch} #{repo} #{running.path}", defer e
-        opt = 
-          cwd: path.join process.cwd(), running.path
-          stdio: 'inherit'
-        running.process = spawn './.test-porta',[], opt 
-        running.process.on 'exit', ->
-          console.error "#{running.path} exited.."
-
-           
+    if e
+      console.error e.message
     else
-      console.log "heads not changed."
-    await setTimeout defer(), 5000
+      if branchesJSON != JSON.stringify branches
+        console.log "heads changed, stopping..."
+        branchesJSON = JSON.stringify branches
+        for running in runnings
+          try
+            running.process.kill()
+          catch e
+          await exec "rm -Rf #{running.path}", defer e
+
+        runnings =[]
+        for branch in branches
+          running = 
+            path: "#{branch.branch}.#{(repo.match /\/([^\/]+)$/)[1]}.test-porta.tmp"
+          console.log "checking out to #{running.path}..."
+          await exec "rm -Rf #{running.path}", defer e
+          await exec "mkdir #{running.path}", defer e
+          await exec "git clone --depth=1 --recursive --branch #{branch.branch} #{repo} #{running.path}", defer e
+          opt = 
+            cwd: path.join process.cwd(), running.path
+            stdio: 'inherit'
+          running.process = spawn './.test-porta',[], opt 
+          running.process.on 'exit', ->
+            console.error "#{running.path} exited.."
+
+             
+      else
+        console.log "heads not changed."
+    await setTimeout defer(), 10000
 
 
   
