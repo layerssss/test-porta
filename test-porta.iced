@@ -37,7 +37,7 @@ module.exports = ()->
         runnings =[]
         for branch in branches
           running = 
-            path: "#{branch.branch}.#{(repo.match /\/([^\/]+)$/)[1]}.test-porta.tmp"
+            path: "#{branch.branch}.#{repo.replace /[^0-9a-z]/g, '-'}.test-porta.tmp"
           console.log "checking out to #{running.path}..."
           await exec "rm -Rf #{running.path}", defer e
           await exec "mkdir #{running.path}", defer e
