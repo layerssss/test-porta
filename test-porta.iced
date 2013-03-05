@@ -14,12 +14,25 @@ lsremote = (repo, cb)->
     return branch: b[2], head: b[1]
 
 module.exports = ()->
+  runnings = []
+  branchesJSON = ""
+  
+  process.on 'exit',->
+    for running in runnings
+      try
+        running.process.kill()
+      catch e
+    console.log "process exiting.."
+  process.on 'SIGINT', ->
+    process.exit -1
+  process.on 'SIGTERM', ->
+    process.exit -1
+
   if process.argv.length != 3
     console.log "Usage: test-porta GITENTRYPOINT"
     return process.exit 1
   repo = process.argv[2]
-  runnings = []
-  branchesJSON = ""
+
   while true
     await lsremote repo, defer e, branches
     if e
@@ -32,6 +45,7 @@ module.exports = ()->
           try
             running.process.kill()
           catch e
+        for running in runnings
           await exec "rm -Rf #{running.path}", defer e
 
         runnings =[]
