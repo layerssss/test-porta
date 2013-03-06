@@ -42,13 +42,15 @@ module.exports = ()->
         console.log "heads changed, stopping..."
         branchesJSON = JSON.stringify branches
         for running in runnings
+          console.log "killing #{running.process.pid}.."
           try
             running.process.kill()
           catch e
+            console.error e
         for running in runnings
           await exec "rm -Rf #{running.path}", defer e
 
-        runnings =[]
+        runnings = []
         for branch in branches
           running = 
             path: "#{branch.branch}.#{repo.replace /[^0-9a-z]/g, '-'}.test-porta.tmp"
@@ -58,17 +60,17 @@ module.exports = ()->
           await exec "git clone --depth=1 --recursive --branch #{branch.branch} #{repo} #{running.path}", defer e
           opt = 
             cwd: path.join process.cwd(), running.path
-            stdio: 'inherit'
+            stdio: ['ignore', 1, 2]
             env: {}
           opt.env[k] = v for k, v of process.env
           opt.env['TESTPORTABRANCH'] = branch.branch
           opt.env['TESTPORTAREPO'] = repo
           running.process = spawn './.test-porta',[], opt 
           running.process.on 'exit', ->
-            console.error "#{running.path} exited.."
+            console.error "#{this.pid} exited.."
           runnings.push running
 
-             
+        console.log "restarting done. #{runnings.length} running.."
       else
         console.log "heads not changed. #{runnings.length} running.."
     await setTimeout defer(), 10000
