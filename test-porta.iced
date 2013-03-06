@@ -70,7 +70,7 @@ module.exports = ()->
 
              
       else
-        console.log "heads not changed."
+        console.log "heads not changed. #{runnings.leng} running.."
     await setTimeout defer(), 10000
 
 
