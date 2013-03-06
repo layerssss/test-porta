@@ -66,6 +66,7 @@ module.exports = ()->
           running.process = spawn './.test-porta',[], opt 
           running.process.on 'exit', ->
             console.error "#{running.path} exited.."
+          runnings.push running
 
              
       else
